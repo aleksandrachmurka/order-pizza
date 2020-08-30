@@ -1,5 +1,5 @@
 import React from 'react';
-import Order from './containers/Order/Order';
+import Order from './containers/Order';
 
 
 const App = () => (
