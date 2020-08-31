@@ -8,6 +8,8 @@ const IngredientsList = ({
   ingredients,
   addIngredient,
   removeIngredient,
+  orderEnabled,
+  order
 }) => (
     <div className={ingredientsList.list}>
       {INGREDIENTS.map(({ label, type }) => (
@@ -20,6 +22,9 @@ const IngredientsList = ({
         />
       ))}
       <p>Current Price:<strong>{price.toFixed(2)}</strong></p>
+      <button className={ingredientsList.orderButton} disabled={!orderEnabled} onClick={order}>
+        Place an order
+      </button>
     </div>
   )
 

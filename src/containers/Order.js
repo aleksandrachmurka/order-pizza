@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Pizza from '../components/Pizza/Pizza';
 import IngredientsList from '../components/IngredientsList/IngredientsList';
+import Modal from '../components/Modal/Modal';
+import OrderSummary from '../components/OrderSummary/OrderSummary';
 import { INGREDIENTS_PRICES as PRICES } from '../const/data';
 
 class Order extends Component {
@@ -12,6 +14,8 @@ class Order extends Component {
 			meat: 0
 		},
 		price: 3,
+		orderEnabled: false,
+		ordering: false,
 	}
 
 	addIngredientHandler = (type) => {
@@ -21,6 +25,7 @@ class Order extends Component {
 		}
 		const price = this.state.price + PRICES[type];
 		this.setState({ ingredients, price })
+		this.updateOrderEnabled(ingredients)
 	}
 
 	removeIngredientHandler = (type) => {
@@ -30,14 +35,30 @@ class Order extends Component {
 		}
 		const price = this.state.price - PRICES[type];
 		this.setState({ ingredients, price })
+		this.updateOrderEnabled(ingredients)
+	}
+
+	updateOrderEnabled = (ingredients) => {
+		const sum = Object.values(ingredients).reduce((sum, el) => sum + el, 0);
+		this.setState({
+			orderEnabled: (sum > 0)
+		});
+	}
+
+	orderHandler = () => {
+		this.setState({ ordering: true });
 	}
 
 	render() {
 		return (
 			<>
+				<Modal show={this.state.ordering}>
+					<OrderSummary ingredients={this.state.ingredients} />
+				</Modal>
 				<Pizza ingredients={this.state.ingredients} />
 				<IngredientsList price={this.state.price} ingredients={this.state.ingredients}
 					addIngredient={this.addIngredientHandler} removeIngredient={this.removeIngredientHandler}
+					orderEnabled={this.state.orderEnabled} order={this.orderHandler}
 				/>
 			</>
 		)
