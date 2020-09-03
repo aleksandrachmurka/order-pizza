@@ -38,7 +38,7 @@ class Order extends Component {
 		this.updateOrderEnabled(ingredients)
 	}
 
-	updateOrderEnabled = (ingredients) => {
+	updateOrderEnabled = ingredients => {
 		const sum = Object.values(ingredients).reduce((sum, el) => sum + el, 0);
 		this.setState({
 			orderEnabled: (sum > 0)
@@ -49,14 +49,26 @@ class Order extends Component {
 		this.setState({ ordering: true });
 	}
 
+	cancelOrderHandler = () => {
+		this.setState({ ordering: false })
+	}
+
+	proceedToCheckoutHandler = () => {
+		alert('Proceed');
+	}
+
 	render() {
 		return (
 			<>
-				<Modal show={this.state.ordering}>
-					<OrderSummary ingredients={this.state.ingredients} />
+				<Modal show={this.state.ordering} close={this.cancelOrderHandler}>
+					<OrderSummary
+						ingredients={this.state.ingredients} price={this.state.price}
+						cancel={this.cancelOrderHandler} proceed={this.proceedToCheckoutHandler}
+					/>
 				</Modal>
 				<Pizza ingredients={this.state.ingredients} />
-				<IngredientsList price={this.state.price} ingredients={this.state.ingredients}
+				<IngredientsList
+					price={this.state.price} ingredients={this.state.ingredients}
 					addIngredient={this.addIngredientHandler} removeIngredient={this.removeIngredientHandler}
 					orderEnabled={this.state.orderEnabled} order={this.orderHandler}
 				/>
