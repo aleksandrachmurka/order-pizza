@@ -5,7 +5,7 @@ import Modal from '../components/Modal/Modal';
 import Spinner from '../components/Spinner/Spinner';
 import OrderSummary from '../components/OrderSummary/OrderSummary';
 import { INGREDIENTS_PRICES as PRICES } from '../const/data';
-import witError from '../hoc//withError';
+import withError from '../hoc//withError';
 import axios from '../axios';
 
 class Order extends Component {
@@ -107,4 +107,4 @@ class Order extends Component {
 	}
 };
 
-export default withError(Order);
+export default withError(Order, axios);
