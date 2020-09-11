@@ -10,16 +10,20 @@ import axios from '../axios';
 
 class Order extends Component {
 	state = {
-		ingredients: {
-			salad: 0,
-			bacon: 0,
-			cheese: 0,
-			meat: 0
-		},
+		ingredients: null,
 		price: 3,
 		orderEnabled: false,
 		ordering: false,
 		loading: false,
+		error: false,
+	}
+
+	componentDidMount() {
+		axios.get('https://order-pizza-44676.firebaseio.com/ingredients')
+			.then(res => {
+				this.setState({ ingredients: res.data })
+			})
+			.catch(err => this.setState({ error: true }));
 	}
 
 	addIngredientHandler = (type) => {
@@ -87,21 +91,26 @@ class Order extends Component {
 		return (
 			<>
 				<Modal show={this.state.ordering} close={this.cancelOrderHandler}>
-					{this.state.loading ?
-						<Spinner />
-						:
+					{!this.state.loading && this.state.ingredients ?
 						<OrderSummary
 							ingredients={this.state.ingredients} price={this.state.price}
 							cancel={this.cancelOrderHandler} proceed={this.proceedToCheckoutHandler}
 						/>
+						: <Spinner />
 					}
 				</Modal>
-				<Pizza ingredients={this.state.ingredients} />
-				<IngredientsList
-					price={this.state.price} ingredients={this.state.ingredients}
-					addIngredient={this.addIngredientHandler} removeIngredient={this.removeIngredientHandler}
-					orderEnabled={this.state.orderEnabled} order={this.orderHandler}
-				/>
+				{this.state.ingredients ?
+					<>
+						<Pizza ingredients={this.state.ingredients} />
+						<IngredientsList
+							price={this.state.price} ingredients={this.state.ingredients}
+							addIngredient={this.addIngredientHandler} removeIngredient={this.removeIngredientHandler}
+							orderEnabled={this.state.orderEnabled} order={this.orderHandler}
+						/>
+					</>
+					: <Spinner />
+				}
+				{this.state.error && <p>Error loading ingredients</p>}
 			</>
 		)
 	}
