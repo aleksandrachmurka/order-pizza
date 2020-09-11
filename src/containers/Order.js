@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import Pizza from '../components/Pizza/Pizza';
 import IngredientsList from '../components/IngredientsList/IngredientsList';
 import Modal from '../components/Modal/Modal';
+import Spinner from '../components/Spinner/Spinner';
 import OrderSummary from '../components/OrderSummary/OrderSummary';
 import { INGREDIENTS_PRICES as PRICES } from '../const/data';
+import witError from '../hoc//withError';
+import axios from '../axios';
 
 class Order extends Component {
 	state = {
@@ -16,6 +19,7 @@ class Order extends Component {
 		price: 3,
 		orderEnabled: false,
 		ordering: false,
+		loading: false,
 	}
 
 	addIngredientHandler = (type) => {
@@ -54,17 +58,43 @@ class Order extends Component {
 	}
 
 	proceedToCheckoutHandler = () => {
-		alert('Proceed');
+		this.setState({ loading: true });
+		const order = {
+			customer: {
+				name: 'Me',
+				email: 'me@test.com',
+				phone: '984793083',
+				address: {
+					street: 'Street',
+					houseNumber: 3,
+					zipCode: '89736',
+				},
+			},
+			ingredients: this.state.ingredients,
+			price: this.state.price,
+		};
+
+		axios.post('/orders.json', order)
+			.then(res => {
+				this.setState({ loading: false, ordering: false });
+			})
+			.catch(err => {
+				this.setState({ loading: false, ordering: false });
+			});
 	}
 
 	render() {
 		return (
 			<>
 				<Modal show={this.state.ordering} close={this.cancelOrderHandler}>
-					<OrderSummary
-						ingredients={this.state.ingredients} price={this.state.price}
-						cancel={this.cancelOrderHandler} proceed={this.proceedToCheckoutHandler}
-					/>
+					{this.state.loading ?
+						<Spinner />
+						:
+						<OrderSummary
+							ingredients={this.state.ingredients} price={this.state.price}
+							cancel={this.cancelOrderHandler} proceed={this.proceedToCheckoutHandler}
+						/>
+					}
 				</Modal>
 				<Pizza ingredients={this.state.ingredients} />
 				<IngredientsList
@@ -77,4 +107,4 @@ class Order extends Component {
 	}
 };
 
-export default Order;
+export default withError(Order);

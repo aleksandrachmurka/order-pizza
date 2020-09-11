@@ -3,6 +3,7 @@ import modal from './Modal.module.css';
 import Backdrop from '../Backdrop/Backdrop';
 
 const Modal = ({ show, close, children }) => (
+  //shouldComponentUpdate - show, children
   <>
     <Backdrop show={show} close={close} />
     <div className={modal.modal}
