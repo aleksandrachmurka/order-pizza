@@ -1,10 +1,13 @@
-import React from 'react';
-import navItem from './NavItem.module.css';
+import React from 'react'
+import { NavLink } from 'react-router-dom'
+import styles from './NavItem.module.css'
 
-const NavItem = ({ children, link, active }) => (
-  <li className={navItem.navItem}>
-    <a href={link} className={active && navItem.active}>{children}</a>
+const NavItem = ({ children, link, exact }) => (
+  <li className={styles.navItem}>
+    <NavLink to={link} exact={exact} activeClassName={styles.active}>
+      {children}
+    </NavLink>
   </li>
-);
+)
 
-export default NavItem;
+export default NavItem
