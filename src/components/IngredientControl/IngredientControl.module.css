@@ -1,0 +1,16 @@
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5px 0;
+}
+
+.button {
+  display: block;
+  padding: 5px;
+  margin: 0 5px;
+  width: 80px;
+  border: 1px solid black;
+  cursor: pointer;
+  outline: none;
+}
