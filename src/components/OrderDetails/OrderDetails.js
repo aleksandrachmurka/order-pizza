@@ -2,17 +2,18 @@ import React from 'react'
 import styles from './OrderDetails.module.css'
 
 const OrderDetails = ({ ingredients, price }) => {
-  const ingred = ingredients.map((ingredient) => ({
-    name: ingredient,
-    amount: ingredients[ingredient],
+  const orderIngredients = Object.entries(ingredients).map((ingredient) => ({
+    name: ingredient[0],
+    amount: ingredient[1],
   }))
 
   return (
     <div className={styles.orderDetails}>
       <p>
         Ingredients:{' '}
-        {ingred.map((i) => (
+        {orderIngredients.map((i) => (
           <span
+            key={i.name}
             style={{
               textTransform: 'capitalize',
               display: 'inline-block',
@@ -21,9 +22,9 @@ const OrderDetails = ({ ingredients, price }) => {
               padding: '5px',
             }}
           >
-            {i.name} {i.amount}
+            {`${i.name} ${i.amount}`}
           </span>
-        ))}{' '}
+        ))}
       </p>
       <p>
         Price: <strong>{Number.parseFloat(price).toFixed(2)}</strong>

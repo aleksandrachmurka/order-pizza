@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { Route, Switch } from 'react-router-dom'
-import styles from './App.module.css'
-import Toolbar from './components/Navigation/Toolbar/Toolbar'
 import Order from './containers/Order'
 import Orders from './containers/Orders'
 import CheckoutSummary from './containers/CheckoutSummary'
+import Toolbar from './components/Navigation/Toolbar/Toolbar'
 import SideDrawerToggler from './components/SideDrawer/SideDrawerToggler'
 import SideDrawer from './components/SideDrawer/SideDrawer'
+import styles from './App.module.css'
 
 class App extends Component {
   state = {
@@ -37,8 +37,8 @@ class App extends Component {
           className={this.state.showSideDrawer ? styles.expanded : styles.main}
         >
           <Switch>
-            <Route path="/checkout" component={CheckoutSummary}></Route>
             <Route path="/" exact component={Order}></Route>
+            <Route path="/checkout" component={CheckoutSummary}></Route>
             <Route path="/orders" component={Orders}></Route>
           </Switch>
         </main>

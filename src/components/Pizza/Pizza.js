@@ -1,6 +1,6 @@
 import React from 'react'
 import { pizza } from './Pizza.module.css'
-import Ingredient from './Ingredient/Ingredient'
+import Ingredient from '../Ingredient/Ingredient'
 
 const Pizza = ({ ingredients }) => {
   let ingred = Object.entries(ingredients).map(([key, value]) =>
