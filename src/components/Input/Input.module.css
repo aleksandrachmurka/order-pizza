@@ -1,0 +1,30 @@
+.input {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.label {
+  font-weight: blod;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.element {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  border: 1px solid #ccc;
+  background-color: white;
+  font: inherit;
+  padding: 6px 10px;
+}
+
+.element:focus {
+  background-color: #ccc;
+}
+
+.invalid {
+  border: 1px solid red;
+  background-color: salmon;
+}
