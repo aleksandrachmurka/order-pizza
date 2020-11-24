@@ -1,18 +1,16 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import axios from '../axios'
+import withError from '../hoc//withError'
+import * as actionTypes from '../store/actions'
 import Pizza from '../components/Pizza/Pizza'
 import IngredientsList from '../components/IngredientsList/IngredientsList'
 import Modal from '../components/Modal/Modal'
 import Spinner from '../components/Spinner/Spinner'
 import OrderSummary from '../components/OrderSummary/OrderSummary'
-import { INGREDIENTS_PRICES as PRICES } from '../const/data'
-import withError from '../hoc//withError'
-import axios from '../axios'
 
 class Order extends Component {
   state = {
-    ingredients: null,
-    price: 3,
-    orderEnabled: false,
     ordering: false,
     loading: false,
     error: false,
@@ -27,31 +25,9 @@ class Order extends Component {
       .catch((err) => this.setState({ error: true }))
   }
 
-  addIngredientHandler = (type) => {
-    const ingredients = {
-      ...this.state.ingredients,
-      [type]: this.state.ingredients[type] + 1,
-    }
-    const price = this.state.price + PRICES[type]
-    this.setState({ ingredients, price })
-    this.updateOrderEnabled(ingredients)
-  }
-
-  removeIngredientHandler = (type) => {
-    const ingredients = {
-      ...this.state.ingredients,
-      [type]: this.state.ingredients[type] - 1,
-    }
-    const price = this.state.price - PRICES[type]
-    this.setState({ ingredients, price })
-    this.updateOrderEnabled(ingredients)
-  }
-
   updateOrderEnabled = (ingredients) => {
     const sum = Object.values(ingredients).reduce((sum, el) => sum + el, 0)
-    this.setState({
-      orderEnabled: sum > 0,
-    })
+    return sum > 0
   }
 
   orderHandler = () => {
@@ -63,23 +39,7 @@ class Order extends Component {
   }
 
   proceedToCheckoutHandler = () => {
-    const queryParams = []
-
-    for (const i in this.state.ingredients) {
-      queryParams.push(
-        `${encodeURIComponent(i)}=${encodeURIComponent(
-          this.state.ingredients[i]
-        )}`
-      )
-    }
-
-    queryParams.push(`price=${this.state.price}`)
-    const queryString = queryParams.join('&')
-
-    this.props.history.push({
-      pathname: '/checkout',
-      search: `?${queryString}`,
-    })
+    this.props.history.push('/checkout')
   }
 
   render() {
@@ -88,8 +48,8 @@ class Order extends Component {
         <Modal show={this.state.ordering} close={this.cancelOrderHandler}>
           {!this.state.loading && this.state.ingredients ? (
             <OrderSummary
-              ingredients={this.state.ingredients}
-              price={this.state.price}
+              ingredients={this.sprops.ingredients}
+              price={this.props.price}
               cancel={this.cancelOrderHandler}
               proceed={this.proceedToCheckoutHandler}
             />
@@ -97,15 +57,15 @@ class Order extends Component {
             <Spinner />
           )}
         </Modal>
-        {this.state.ingredients ? (
+        {this.props.ingredients ? (
           <>
-            <Pizza ingredients={this.state.ingredients} />
+            <Pizza ingredients={this.props.ingredients} />
             <IngredientsList
-              price={this.state.price}
-              ingredients={this.state.ingredients}
-              addIngredient={this.addIngredientHandler}
-              removeIngredient={this.removeIngredientHandler}
-              orderEnabled={this.state.orderEnabled}
+              price={this.props.price}
+              ingredients={this.props.ingredients}
+              addIngredient={this.props.addIngredientHandler}
+              removeIngredient={this.props.removeIngredientHandler}
+              orderEnabled={this.updateOrderEnabled(this.props.ingredients)}
               order={this.orderHandler}
             />
           </>
@@ -118,4 +78,27 @@ class Order extends Component {
   }
 }
 
-export default withError(Order, axios)
+const mapStateToProps = (state) => ({
+  ingredients: state.ingredients,
+  price: state.price,
+})
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addIngredientHandler: (ingredient) =>
+      dispatch({
+        type: actionTypes.ADD_INGREDIENT,
+        ingredient,
+      }),
+    removeIngredientHandler: (ingredient) =>
+      dispatch({
+        type: actionTypes.REMOVE_INGREDIENT,
+        ingredient,
+      }),
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withError(Order, axios))
