@@ -2,6 +2,7 @@ import React from 'react'
 import styles from './OrderDetails.module.css'
 
 const OrderDetails = ({ ingredients, price }) => {
+  console.log(ingredients)
   const orderIngredients = Object.entries(ingredients).map((ingredient) => ({
     name: ingredient[0],
     amount: ingredient[1],

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { Route } from 'react-router-dom'
+import { Route, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { orderActions } from '../store/actions/order'
 import Checkout from '../components/Checkout/Checkout'
 import ContactData from './ContactData'
 
@@ -15,23 +16,30 @@ class CheckoutSummary extends Component {
 
   render() {
     return (
-      <div>
-        <Checkout
-          ingredients={this.props.ingredients}
-          cancel={this.cancelHandler}
-          proceed={this.proceedHandler}
-        />
-        <Route
-          path={`${this.props.match.path}/contact-data`}
-          component={ContactData}
-        />
-      </div>
+      <>
+        {this.props.ingredients && !this.props.purchased ? (
+          <div>
+            <Checkout
+              ingredients={this.props.ingredients}
+              cancel={this.cancelHandler}
+              proceed={this.proceedHandler}
+            />
+            <Route
+              path={`${this.props.match.path}/contact-data`}
+              component={ContactData}
+            />
+          </div>
+        ) : (
+          <Redirect to="/" />
+        )}
+      </>
     )
   }
 }
 
 const mapStateToProps = (state) => ({
-  ingredients: state.ingredients,
+  ingredients: state.pizza.ingredients,
+  purchased: state.order.purchased,
 })
 
 export default connect(mapStateToProps)(CheckoutSummary)

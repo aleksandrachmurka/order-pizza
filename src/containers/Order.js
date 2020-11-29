@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import axios from '../axios'
+import { connect } from 'react-redux'
 import withError from '../hoc//withError'
-import * as actionTypes from '../store/actions'
+import { pizzaActions } from '../store/actions/pizza'
+import { orderActions } from '../store/actions/order'
 import Pizza from '../components/Pizza/Pizza'
 import IngredientsList from '../components/IngredientsList/IngredientsList'
 import Modal from '../components/Modal/Modal'
@@ -17,12 +18,7 @@ class Order extends Component {
   }
 
   componentDidMount() {
-    axios
-      .get('https://pizza-c75f6.firebaseio.com/ingredients.json')
-      .then((res) => {
-        this.setState({ ingredients: res.data })
-      })
-      .catch((err) => this.setState({ error: true }))
+    this.props.initiIngredientsHandler()
   }
 
   updateOrderEnabled = (ingredients) => {
@@ -39,6 +35,7 @@ class Order extends Component {
   }
 
   proceedToCheckoutHandler = () => {
+    this.props.purachaseInitHandler()
     this.props.history.push('/checkout')
   }
 
@@ -46,9 +43,9 @@ class Order extends Component {
     return (
       <>
         <Modal show={this.state.ordering} close={this.cancelOrderHandler}>
-          {!this.state.loading && this.state.ingredients ? (
+          {!this.state.loading && this.props.ingredients ? (
             <OrderSummary
-              ingredients={this.sprops.ingredients}
+              ingredients={this.props.ingredients}
               price={this.props.price}
               cancel={this.cancelOrderHandler}
               proceed={this.proceedToCheckoutHandler}
@@ -72,29 +69,26 @@ class Order extends Component {
         ) : (
           <Spinner />
         )}
-        {this.state.error && <p>Error loading ingredients</p>}
+        {this.props.error && <p>Error loading ingredients</p>}
       </>
     )
   }
 }
 
 const mapStateToProps = (state) => ({
-  ingredients: state.ingredients,
-  price: state.price,
+  ingredients: state.pizza.ingredients,
+  price: state.pizza.price,
+  error: state.pizza.error,
 })
 
 const mapDispatchToProps = (dispatch) => {
   return {
     addIngredientHandler: (ingredient) =>
-      dispatch({
-        type: actionTypes.ADD_INGREDIENT,
-        ingredient,
-      }),
+      dispatch(pizzaActions.addIngredient(ingredient)),
     removeIngredientHandler: (ingredient) =>
-      dispatch({
-        type: actionTypes.REMOVE_INGREDIENT,
-        ingredient,
-      }),
+      dispatch(pizzaActions.removeIngredient(ingredient)),
+    purachaseInitHandler: () => dispatch(orderActions.purchaseInit()),
+    initiIngredientsHandler: () => dispatch(pizzaActions.initIngredients()),
   }
 }
 

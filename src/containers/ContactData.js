@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import axios from '../axios'
+import { orderActions } from '../store/actions/order'
+import withError from '../hoc/withError'
 import Button from '../components/Button/Button'
 import Spinner from '../components/Spinner/Spinner'
 import Input from '../components/Input/Input'
@@ -114,7 +116,6 @@ class ContactData extends Component {
 
   orderHandler = (event) => {
     event.preventDefault()
-    this.setState({ loading: true })
 
     const customer = {}
     for (const element in this.state.orderForm) {
@@ -127,15 +128,7 @@ class ContactData extends Component {
       price: this.props.price,
     }
 
-    axios
-      .post('/orders.json', order)
-      .then((res) => {
-        this.setState({ loading: false })
-        this.props.history.push('/')
-      })
-      .catch((err) => {
-        this.setState({ loading: false })
-      })
+    this.props.onOrderHandler(order)
   }
 
   render() {
@@ -156,8 +149,17 @@ class ContactData extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  ingrediets: state.ingredients,
-  price: state.price,
+  ingrediets: state.pizza.ingredients,
+  price: state.pizza.price,
 })
 
-export default connect(mapStateToProps)(ContactData)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onOrderHandler: (order) => dispatch(orderActions.orderStart(order)),
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withError(ContactData, axios))

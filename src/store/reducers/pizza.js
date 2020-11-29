@@ -1,9 +1,10 @@
-import * as actionTypes from './actions'
-import { INGREDIENT_PRICES as PRICES } from '../const/data'
+import { actionTypes } from '../actions/pizza'
+import { INGREDIENT_PRICES as PRICES } from '../../const/data'
 
 const initialState = {
   ingredients: null,
   price: 3,
+  error: false,
 }
 
 const reducer = (state = initialState, action) => {
@@ -13,7 +14,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         ingredients: {
           ...state.ingredients,
-          [action.ingredient]: state.ingredients[action.ingredient]++,
+          [action.ingredient]: state.ingredients[action.ingredient] + 1,
         },
         price: state.price + PRICES[action.ingredient],
       }
@@ -26,6 +27,20 @@ const reducer = (state = initialState, action) => {
         },
         price: state.price - PRICES[action.ingredient],
       }
+    case actionTypes.SET_INGREDIENTS: {
+      return {
+        ...state,
+        ingredients: action.ingredients,
+        price: initialState.price,
+        error: false,
+      }
+    }
+    case actionTypes.INIT_INGREDIENTS_FAILED: {
+      return {
+        ...state,
+        error: true,
+      }
+    }
     default:
       return state
   }
