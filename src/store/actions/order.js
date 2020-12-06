@@ -20,10 +20,11 @@ const orderFail = (error) => ({
   error,
 })
 
-const orderStart = (order) => {
+const orderStart = (order, token) => {
   return (dispatch) => {
+    dispatch(purchaseInit())
     axios
-      .post('/orders.json', order)
+      .post(`/orders.json?auth=${token}`, order)
       .then((res) => {
         dispatch(orderSuccess(res.data.name, order))
       })
@@ -55,11 +56,12 @@ const fetchOrdersFail = (error) => {
   }
 }
 
-const fetchOrders = () => {
+const fetchOrders = (token, userId) => {
   return (dispatch) => {
     dispatch(fetchOrdersInit())
+    const queryParams = `?auth=${token}&orderBy="userId"&equalTo"${userId}"`
     axios
-      .get('https://pizza-c75f6.firebaseio.com/orders.json')
+      .get(`https://pizza-c75f6.firebaseio.com/orders.json${queryParams}`)
       .then((res) => {
         const fetchedOrders = []
         for (const key in res.data) {

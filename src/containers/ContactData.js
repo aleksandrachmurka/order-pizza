@@ -40,7 +40,7 @@ class ContactData extends Component {
         placeholder: 'Postal code',
         value: '',
         required: true,
-        length: 5,
+        requiredLength: 5,
         valid: false,
         touched: false,
       },
@@ -60,7 +60,7 @@ class ContactData extends Component {
   validate = (element) => {
     if (!element.touched) return
     if (element.length) {
-      return element.value.length >= element.length
+      return element.value.length >= element.requiredLength
     }
     if (element.required) {
       return element.value.trim() !== ''
@@ -126,9 +126,10 @@ class ContactData extends Component {
       customer,
       ingredients: this.props.ingredients,
       price: this.props.price,
+      userId: this.props.userdId,
     }
 
-    this.props.onOrderHandler(order)
+    this.props.onOrderHandler(order, this.props.token)
   }
 
   render() {
@@ -149,13 +150,16 @@ class ContactData extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  ingrediets: state.pizza.ingredients,
+  ingredients: state.pizza.ingredients,
   price: state.pizza.price,
+  token: state.authentication.token,
+  userId: state.authentication.userId,
 })
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onOrderHandler: (order) => dispatch(orderActions.orderStart(order)),
+    onOrderHandler: (order, token) =>
+      dispatch(orderActions.orderStart(order, token)),
   }
 }
 

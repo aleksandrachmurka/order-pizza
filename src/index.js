@@ -7,12 +7,14 @@ import { createStore, applyMiddleware, compose, combineReducers } from 'redux'
 import * as serviceWorker from './serviceWorker'
 import order from './store/reducers/order'
 import pizza from './store/reducers/pizza'
+import authentication from './store/reducers/authentication'
 import App from './App'
 import './index.css'
 
 const rootReducer = combineReducers({
   order,
   pizza,
+  authentication,
 })
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose

@@ -10,6 +10,7 @@ const IngredientsList = ({
   removeIngredient,
   orderEnabled,
   order,
+  isAuthenticated,
 }) => (
   <div className={ingredientsList.list}>
     {INGREDIENTS.map(({ label, type }) => (
@@ -29,7 +30,7 @@ const IngredientsList = ({
       disabled={!orderEnabled}
       onClick={order}
     >
-      Place an order
+      {isAuthenticated ? 'Place an order' : 'Sign in to order'}
     </button>
   </div>
 )

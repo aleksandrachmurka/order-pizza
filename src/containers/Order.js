@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import withError from '../hoc//withError'
 import { pizzaActions } from '../store/actions/pizza'
 import { orderActions } from '../store/actions/order'
+import { authActions } from '../store/actions/authentication'
 import Pizza from '../components/Pizza/Pizza'
 import IngredientsList from '../components/IngredientsList/IngredientsList'
 import Modal from '../components/Modal/Modal'
@@ -27,7 +28,11 @@ class Order extends Component {
   }
 
   orderHandler = () => {
-    this.setState({ ordering: true })
+    if (this.props.isAuthenticated) {
+      this.setState({ ordering: true })
+    }
+    this.props.setRedirectPathHandler('/checkout')
+    this.props.history.push('/auth')
   }
 
   cancelOrderHandler = () => {
@@ -64,6 +69,7 @@ class Order extends Component {
               removeIngredient={this.props.removeIngredientHandler}
               orderEnabled={this.updateOrderEnabled(this.props.ingredients)}
               order={this.orderHandler}
+              isAuthenticated={this.props.isAuthenticated}
             />
           </>
         ) : (
@@ -79,6 +85,7 @@ const mapStateToProps = (state) => ({
   ingredients: state.pizza.ingredients,
   price: state.pizza.price,
   error: state.pizza.error,
+  isAuthenticated: state.authentication.token !== null,
 })
 
 const mapDispatchToProps = (dispatch) => {
@@ -89,6 +96,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(pizzaActions.removeIngredient(ingredient)),
     purachaseInitHandler: () => dispatch(orderActions.purchaseInit()),
     initiIngredientsHandler: () => dispatch(pizzaActions.initIngredients()),
+    setRedirectPathHandler: (path) =>
+      dispatch(authActions.setAuthRedirectPath(path)),
   }
 }
 
