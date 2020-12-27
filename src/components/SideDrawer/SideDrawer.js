@@ -12,6 +12,7 @@ const SideDrawer = ({ show, toggleShow, isAuthenticated }) =>
         className={`${classes.sideDrawer} ${
           show ? classes.open : classes.closed
         }`}
+        onClick={toggleShow}
       >
         <Logo />
         <Navigation isAuthenticated={isAuthenticated} />

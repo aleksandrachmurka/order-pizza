@@ -3,14 +3,20 @@ import { Route, Switch, withRouter, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { authActions } from './store/actions/authentication'
 import Order from './containers/Order'
-import Orders from './containers/Orders'
-import CheckoutSummary from './containers/CheckoutSummary'
 import Authentication from './containers/Authentication'
 import Logout from './containers/Logout'
+import LazyComponent from './hoc/lazyComponent'
 import Toolbar from './components/Navigation/Toolbar/Toolbar'
 import SideDrawerToggler from './components/SideDrawer/SideDrawerToggler'
 import SideDrawer from './components/SideDrawer/SideDrawer'
 import styles from './App.module.css'
+
+const lazyCheckoutSummary = LazyComponent(() => {
+  return import('./containers/CheckoutSummary')
+})
+const lazyOrders = LazyComponent(() => {
+  return import('./containers/Orders')
+})
 
 class App extends Component {
   state = {
@@ -30,8 +36,8 @@ class App extends Component {
   render() {
     const authRoutes = (
       <>
-        <Route path="/orders" component={Orders}></Route>
-        <Route path="/checkout" component={CheckoutSummary}></Route>
+        <Route path="/orders" component={lazyOrders}></Route>
+        <Route path="/checkout" component={lazyCheckoutSummary}></Route>
       </>
     )
 

@@ -49,11 +49,10 @@ const authenticate = (email, password, method) => {
         localStorage.setItem('token', res.data.idToken)
         localStorage.setItem('expirationDate', expirationDate)
         localStorage.setItem('userId', res.data.localId)
-        dispatch(authSuccess(res.dataidToken, res.date.localId))
+        dispatch(authSuccess(res.data.idToken, res.data.localId))
         dispatch(checkAuthTimeOut(res.data.expiresIn))
       })
       .catch((error) => {
-        console.log(error)
         dispatch(authError(error))
       })
   }
