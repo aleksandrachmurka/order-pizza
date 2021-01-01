@@ -11,7 +11,7 @@ import Modal from '../components/Modal/Modal'
 import Spinner from '../components/Spinner/Spinner'
 import OrderSummary from '../components/OrderSummary/OrderSummary'
 
-class Order extends Component {
+export class Order extends Component {
   state = {
     ordering: false,
     loading: false,
@@ -19,7 +19,7 @@ class Order extends Component {
   }
 
   componentDidMount() {
-    this.props.initiIngredientsHandler()
+    this.props.initIngredientsHandler()
   }
 
   updateOrderEnabled = (ingredients) => {
@@ -95,7 +95,7 @@ const mapDispatchToProps = (dispatch) => {
     removeIngredientHandler: (ingredient) =>
       dispatch(pizzaActions.removeIngredient(ingredient)),
     purachaseInitHandler: () => dispatch(orderActions.purchaseInit()),
-    initiIngredientsHandler: () => dispatch(pizzaActions.initIngredients()),
+    initIngredientsHandler: () => dispatch(pizzaActions.initIngredients()),
     setRedirectPathHandler: (path) =>
       dispatch(authActions.setAuthRedirectPath(path)),
   }
