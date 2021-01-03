@@ -13,10 +13,7 @@ export const INGREDIENT_PRICES = {
 }
 
 export const AUTH_URLS = {
-  signUp:
-    'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCL5vMuLhOi4CaI_oiEuQscayH6FV3DswM',
-  signIn:
-    'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCL5vMuLhOi4CaI_oiEuQscayH6FV3DswM',
-  getUserData:
-    'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCL5vMuLhOi4CaI_oiEuQscayH6FV3DswM',
+  signUp: process.env.REACT_APP_SIGN_UP,
+  signIn: process.env.REACT_APP_SIGN_IN,
+  getUserData: process.env.REACT_APP_GET_USER_DATA,
 }
