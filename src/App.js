@@ -1,74 +1,69 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { authActions } from './store/actions/authentication'
 import Order from './containers/Order'
 import Authentication from './containers/Authentication'
 import Logout from './containers/Logout'
-import LazyComponent from './hoc/lazyComponent'
 import Toolbar from './components/Navigation/Toolbar/Toolbar'
 import SideDrawerToggler from './components/SideDrawer/SideDrawerToggler'
 import SideDrawer from './components/SideDrawer/SideDrawer'
 import styles from './App.module.css'
 
-const lazyCheckoutSummary = LazyComponent(() => {
+const CheckoutSummary = React.lazy(() => {
   return import('./containers/CheckoutSummary')
 })
-const lazyOrders = LazyComponent(() => {
+const Orders = React.lazy(() => {
   return import('./containers/Orders')
 })
 
-class App extends Component {
-  state = {
-    showSideDrawer: false,
+const App = (props) => {
+  const { autoSingInHandler } = props
+  const [showSideDrawer, setShowSideDrawer] = useState(false)
+
+  useEffect(() => {
+    autoSingInHandler()
+  }, [])
+
+  const toggleSideDrawerHandler = () => {
+    setShowSideDrawer(!showSideDrawer)
   }
 
-  componentDidMount() {
-    this.props.autoSingInHandler()
-  }
+  const authRoutes = (
+    <Suspense fallback={<p>Loading... </p>}>
+      <Route path="/orders" render={(props) => <Orders {...props} />} />
+      <Route
+        path="/checkout"
+        render={(props) => <CheckoutSummary {...props} />}
+      />
+    </Suspense>
+  )
 
-  toggleSideDrawerHandler = () => {
-    this.setState((prevState) => ({
-      showSideDrawer: !prevState.showSideDrawer,
-    }))
-  }
-
-  render() {
-    const authRoutes = (
-      <>
-        <Route path="/orders" component={lazyOrders}></Route>
-        <Route path="/checkout" component={lazyCheckoutSummary}></Route>
-      </>
-    )
-
-    return (
-      <>
-        <header>
-          <SideDrawerToggler
-            show={this.state.showSideDrawer}
-            toggleShow={this.toggleSideDrawerHandler}
-          />
-          <SideDrawer
-            show={this.state.showSideDrawer}
-            toggleShow={this.toggleSideDrawerHandler}
-            isAuthenticated={this.props.isAuthenticated}
-          />
-          <Toolbar isAuthenticated={this.props.isAuthenticated} />
-        </header>
-        <main
-          className={this.state.showSideDrawer ? styles.expanded : styles.main}
-        >
-          <Switch>
-            <Route path="/" exact component={Order}></Route>
-            <Route path="/auth" component={Authentication}></Route>
-            <Route path="/logout" component={Logout}></Route>
-            {this.props.isAuthenticated && authRoutes}
-            <Redirect to="/" />
-          </Switch>
-        </main>
-      </>
-    )
-  }
+  return (
+    <>
+      <header>
+        <SideDrawerToggler
+          show={showSideDrawer}
+          toggleShow={toggleSideDrawerHandler}
+        />
+        <SideDrawer
+          show={showSideDrawer}
+          toggleShow={toggleSideDrawerHandler}
+          isAuthenticated={props.isAuthenticated}
+        />
+        <Toolbar isAuthenticated={props.isAuthenticated} />
+      </header>
+      <main className={showSideDrawer ? styles.expanded : styles.main}>
+        <Switch>
+          <Route path="/" exact component={Order}></Route>
+          <Route path="/auth" component={Authentication}></Route>
+          <Route path="/logout" component={Logout}></Route>
+          {props.isAuthenticated && authRoutes}
+          <Redirect to="/" />
+        </Switch>
+      </main>
+    </>
+  )
 }
 
 const mapStateToProps = (state) => ({

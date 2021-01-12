@@ -3,7 +3,7 @@ import { pizza } from './Pizza.module.css'
 import Ingredient from '../Ingredient/Ingredient'
 
 const Pizza = ({ ingredients }) => {
-  let ingred = Object.entries(ingredients).map(([key, value]) =>
+  const ingred = Object.entries(ingredients).map(([key, value]) =>
     [...Array(value)].map((_, i) => <Ingredient key={key + i} type={key} />)
   )
 
